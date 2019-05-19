@@ -1,0 +1,8 @@
+[template]
+src = "8220.conf.tmpl"
+dest = "/etc/nginx/conf.d/8220.conf"
+keys = [
+  "/work/webapp/ips",
+]
+check_cmd = "/usr/sbin/nginx -t -c {{.src}}"
+reload_cmd = "/usr/sbin/service nginx restart"

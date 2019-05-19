@@ -1,0 +1,7 @@
+[template]
+src = "8220.conf.tmpl"    # 默认在/etc/confd/templates目录下
+dest = "/etc/nginx/conf.d/8220.conf"
+keys = [
+"/work/webapp/ips/",
+]
+reload_cmd ="/usr/sbin/nginx -s reload"   # 最后执行的命令

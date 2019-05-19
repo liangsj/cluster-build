@@ -1,0 +1,168 @@
+version: '2.2'
+services:
+    redis_master:
+        image: redis
+        container_name: redis_master
+        networks:
+            - front
+        ports:
+            - 7002:6379
+        restart: always
+    redis_slave_1:
+        image: redis
+        ports:
+            - 7003:6379
+        restart: always
+        container_name: redis_slave_1
+        command: redis-server --slaveof redis_master 6379
+        networks:
+            - front
+        image: redis
+        restart: always
+    redis_slave_2:
+        image: redis
+        ports:
+            - 7004:6379
+        restart: always
+        container_name: redis_slave_2
+        networks:
+            - front
+        image: redis
+        restart: always
+        command: redis-server --slaveof redis_master 6379
+ 
+    sentinel_2:
+        image: redis
+        ports:
+            - 7006:26379
+        restart: always
+        container_name: redis_sentinel_2
+        networks:
+            - front
+        image: redis
+        volumes:
+            - /Users/liangshijian/learn/blog/lesson4/conf:/data/conf
+        restart: always
+
+        command: redis-server /data/conf/sentinel.conf --sentinel  
+
+    sentinel_1:
+        image: redis
+        ports:
+            - 7005:26379
+        restart: always
+        container_name: redis_sentinel_1
+        networks:
+            - front
+        image: redis
+        volumes:
+            - /Users/liangshijian/learn/blog/lesson4/conf:/data/conf
+        restart: always
+
+        command: redis-server /data/conf/sentinel.conf --sentinel
+    webapp_1:
+        image: redigo
+        container_name: webapp_1
+        ports:
+            - 8081:8080
+        networks:
+            - front
+        volumes:
+            - /Users/liangshijian/learn/blog/src/lesson3/webapp:/go/src/lesson3/webapp
+        command: go run /go/src/lesson3/webapp/main.go
+    webapp_2:
+        image: redigo
+        container_name: webapp_2
+        ports:
+            - 8082:8080
+        networks:
+            - front
+        volumes:
+            - /Users/liangshijian/learn/blog/src/lesson3/webapp:/go/src/lesson3/webapp
+        command: go run /go/src/lesson3/webapp/main.go
+
+    webapp_3:
+        image: redigo
+        container_name: webapp_3
+        ports:
+            - 8083:8080
+        networks:
+            - front
+        volumes:
+            - /Users/liangshijian/learn/blog/src/lesson3/webapp:/go/src/lesson3/webapp
+        command: go run /go/src/lesson3/webapp/main.go
+    webapp_4:
+        image: redigo
+        container_name: webapp_4
+        ports:
+            - 8084:8080
+        networks:
+            - front
+        volumes:
+            - /Users/liangshijian/learn/blog/src/lesson3/webapp:/go/src/lesson3/webapp
+        command: go run /go/src/lesson3/webapp/main.go
+
+    webapp_5:
+        image: redigo
+        container_name: webapp_5
+        ports:
+            - 8085:8080
+        networks:
+            - front
+        volumes:
+            - /Users/liangshijian/learn/blog/src/lesson3/webapp:/go/src/lesson3/webapp
+        command: go run /go/src/lesson3/webapp/main.go
+    webapp_6:
+        image: redigo
+        container_name: webapp_6
+        ports:
+            - 8086:8080
+        networks:
+            - front
+        volumes:
+            - /Users/liangshijian/learn/blog/src/lesson3/webapp:/go/src/lesson3/webapp
+        command: go run /go/src/lesson3/webapp/main.go
+ 
+    mysql:
+        image: mysql 
+        container_name: mysql_master
+        ports:
+            - 7007:3306
+        networks:
+            - front
+        environment:      
+            "MYSQL_ROOT_PASSWORD": "123456"
+            #- MYSQL_ALLOW_EMPTY_PASSWORD: true
+        volumes:
+            - /Users/liangshijian/learn/blog/lesson3/src/conf:/go/src/conf
+    phpadmin_1:
+        image: kwajahussain/phpadmin 
+        container_name: phpadmin_1
+        ports:
+            - 7008:9000
+            - 7009:80
+        networks:
+            - front
+              #     volumes:
+              # - /Users/liangshijian/learn/blog/lesson3/conf:/etc/phpldapadmin
+        environment:
+            "PMA_USER": "root"
+            "PMA_PASSWORD": "123456"
+            "PMA_HOST": "mysql_master"
+            "PMA_PORT": "3306"
+    nginx:
+        image: nginxconfd
+        container_name: nginx
+        volumes:
+            - /Users/liangshijian/learn/blog/lesson4/src/confd/:/etc/confd/
+        ports:
+            - 8220:8220
+            - 8280:80
+        networks:
+            - front
+        command: ./etc/boost.sh
+        
+networks:
+    front:
+        driver: bridge
+    
